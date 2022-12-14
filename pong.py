@@ -25,9 +25,10 @@ WHITE = (255, 255, 255)
 
 #Define the ball's properties
 BALL_RADIUS = 20
+# Set the initial position of the ball to the middle of the screen
 BALL_X = SCREEN_WIDTH / 2
-BALL_Y = SCREEN_HEIGHT - BALL_RADIUS
-BALL_VELOCITY = 2
+BALL_Y = SCREEN_HEIGHT / 2
+BALL_VELOCITY = 5
 
 #Define the platform's properties
 PLATFORM_WIDTH = 100
@@ -48,12 +49,32 @@ while True:
     # Update the ball's position
         BALL_X += BALL_VELOCITY
         BALL_Y += BALL_VERTICAL_VELOCITY
+    #Check if the ball has hit the top or bottom of the screen
+    if BALL_Y + BALL_RADIUS >= SCREEN_HEIGHT or BALL_Y - BALL_RADIUS <= 0:
+    #Invert the ball's vertical velocity
+        BALL_VERTICAL_VELOCITY = -BALL_VERTICAL_VELOCITY
 
     # Check if the ball is in contact with the platform
-        if BALL_Y + BALL_RADIUS > PLATFORM_Y and BALL_X > PLATFORM_X and BALL_X < PLATFORM_X + PLATFORM_WIDTH:
-        # Invert the ball's vertical velocity
-            BALL_VERTICAL_VELOCITY = -BALL_VERTICAL_VELOCITY
+    if BALL_Y + BALL_RADIUS > PLATFORM_Y and BALL_X > PLATFORM_X and BALL_X < PLATFORM_X + PLATFORM_WIDTH:
+    # Invert the ball's vertical velocity
+        BALL_VERTICAL_VELOCITY = -BALL_VERTICAL_VELOCITY
+    # Set the ball's horizontal velocity based on where it hits the platform
+        BALL_VELOCITY = (BALL_X - (PLATFORM_X + PLATFORM_WIDTH / 2)) / 10
+    # Check for keyboard events
+    if event.type == pygame.KEYDOWN:
+    # If the left arrow key is pressed
+        if event.key == pygame.K_LEFT:
+        # Move the platform to the left
+            PLATFORM_X -= 10
+    # If the right arrow key is pressed
+        elif event.key == pygame.K_RIGHT:
+        # Move the platform to the right
+            PLATFORM_X += 10
 
+    #Check if the user has clicked the "x" button on the window
+    if event.type == pygame.QUIT:
+        #If so, end the game loop
+        break
     # Update the screen
     screen.fill(WHITE)
     pygame.draw.circle(screen, (0, 0, 0), (int(BALL_X), int(BALL_Y)), BALL_RADIUS)
