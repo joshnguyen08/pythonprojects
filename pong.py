@@ -52,11 +52,11 @@ while True:
         if event.type == pygame.KEYDOWN:
             #If the left arrow key is pressed
             if event.key == pygame.K_LEFT:
-                # Set the platform's velocity to move left
+                #Set the platform's velocity to move left
                 PLATFORM_VELOCITY = -15
             #If the right arrow key is pressed
             elif event.key == pygame.K_RIGHT:
-                # Set the platform's velocity to move right
+                #Set the platform's velocity to move right
                 PLATFORM_VELOCITY = 15
         #Check for KEYUP event
         elif event.type == pygame.KEYUP:

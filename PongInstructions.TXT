@@ -1,0 +1,6 @@
+Hello all, 
+
+In order to run this game, please take note of line 16.
+	 Replace this path with the file on your computer that contains the icon image you would like. 
+	 Note, the name will have to correspond and match to an actual file.
+Best, 
