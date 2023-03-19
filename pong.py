@@ -1,6 +1,7 @@
 #Import the necessary modules
 import sys
 import pygame
+import time
 
 #Initialize the game
 pygame.init()
@@ -44,24 +45,33 @@ BALL_VERTICAL_VELOCITY = 5
 #Define platform's velocity
 PLATFORM_VELOCITY = 5
 
+#Running game loop
+game_start_time = time.time()
+final_elasped_time = 0
+game_over = False
+
+game_active = True
 #Run game loop indefinitely
-while True:
+while game_active:
     #Handle events
     for event in pygame.event.get():
-        #Check for keyboard events
-        if event.type == pygame.KEYDOWN:
-            #If the left arrow key is pressed
-            if event.key == pygame.K_LEFT:
-                #Set the platform's velocity to move left
-                PLATFORM_VELOCITY = -15
-            #If the right arrow key is pressed
-            elif event.key == pygame.K_RIGHT:
-                #Set the platform's velocity to move right
-                PLATFORM_VELOCITY = 15
-        #Check for KEYUP event
-        elif event.type == pygame.KEYUP:
-            #Set the platform's velocity to 0
-            PLATFORM_VELOCITY = 0
+        #Check if the user has clicked the "x" button on the window
+        if event.type == pygame.QUIT:
+            # If so, end game loop
+            sys.exit()
+
+    #Check for arrow keys
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        #Set the platform's velocity to move left
+        PLATFORM_VELOCITY = -15
+    elif keys[pygame.K_RIGHT]:
+        #Set the platform's velocity to move right
+        PLATFORM_VELOCITY = 15
+    else:
+        #Set the platform's velocity to 0
+        PLATFORM_VELOCITY = 0
+
     #Update the platform's position based on its velocity
     PLATFORM_X += PLATFORM_VELOCITY
 
@@ -83,9 +93,13 @@ while True:
         PLATFORM_X = SCREEN_WIDTH - PLATFORM_WIDTH
 
     #Check if the ball has hit the top or bottom of the screen
-    if BALL_Y + BALL_RADIUS >= SCREEN_HEIGHT or BALL_Y - BALL_RADIUS <= 0:
+    if BALL_Y - BALL_RADIUS <= 0:
         #Invert the ball's vertical velocity once it touches border of game window
         BALL_VERTICAL_VELOCITY = -BALL_VERTICAL_VELOCITY
+    elif BALL_Y + BALL_RADIUS >= SCREEN_HEIGHT:
+        game_over = True
+        game_active = False
+        final_elasped_time = time.time() - game_start_time
 
     #Check if the ball is in contact with the platform
     if BALL_Y + BALL_RADIUS > PLATFORM_Y and BALL_X > PLATFORM_X and BALL_X < PLATFORM_X + PLATFORM_WIDTH:
@@ -103,5 +117,28 @@ while True:
     pygame.draw.rect(screen, (0, 0, 0), (PLATFORM_X, PLATFORM_Y, PLATFORM_WIDTH, PLATFORM_HEIGHT))
     pygame.display.update()
 
+    #Updating Screen if player loses
+    while not game_active:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        screen.fill((0,0,0))
+        font = pygame.font.Font(None,36)
+        minutes, seconds = divmod(final_elasped_time, 60)
+        game_over_text = f"Game Over! You lasted {int(minutes)} minutes {int(seconds)} seconds"
+        text = font.render(game_over_text, True, WHITE)
+        text_rect = text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        screen.blit(text, text_rect)
+        pygame.display.update()
+    else: 
+        screen.fill(WHITE)
+        pygame.draw.circle(screen, (0, 0, 0), (int(BALL_X), int(BALL_Y)), BALL_RADIUS)
+        pygame.draw.rect(screen, (0, 0, 0), (PLATFORM_X, PLATFORM_Y, PLATFORM_WIDTH, PLATFORM_HEIGHT))
+
+    pygame.display.update()
     #60 FPS 
     clock.tick(60)
+
+
+
+    
